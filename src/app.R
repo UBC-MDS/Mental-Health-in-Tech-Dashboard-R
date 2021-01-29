@@ -71,7 +71,6 @@ app$layout(
     dbcRow(list(
       dbcCol(htmlH2("Overview:"))
     )),
-    
     dbcRow(
       list(
         dbcCol(
@@ -91,9 +90,42 @@ app$layout(
             dccGraph(id = "plot-area")
           )
         )
-      )
+      ) 
     ),
-    dbcRow(list(dbcCol(htmlH2("HR Questions:"))))
+    htmlHr(),
+    dbcRow(list(dbcCol(htmlH2("HR Questions:")))),
+    dbcRow(
+      list(
+        dbcCol(
+          list(
+            dbcCol(htmlH4("Age of Respondents:")),
+            dccRangeSlider(
+              id = "age_slider",
+              min=15,
+              max=65,
+              allowCross=FALSE,
+              marks=list(
+                    "15"= "15",
+                    "20"= "20",
+                    "25"= "25",
+                    "30"= "30",
+                    "35"= "35",
+                    "40"= "40",
+                    "45"= "45",
+                    "50"= "50",
+                    "55"= "55",
+                    "60"= "60",
+                    "65"= "65"),
+              value=list(15, 65)
+            )
+          ), md=3
+        ),
+        dbcCol(
+          list(
+            dccGraph(id = "work_interfere_bars")
+          )
+        )
+    ))
   )
 ))
 
@@ -114,4 +146,38 @@ app$callback(
     ggplotly(gp)
   }
 )
+
+# First HR Plot:
+app$callback(
+  output("work_interfere_bars", "figure"),
+  list(input("age_slider", "value")),
+  function(age_slider=c(15, 65), gender="all") {
+    plot_data <- data %>% 
+        subset(work_interfere_treated != "Not applicable to me" & 
+               work_interfere_not_treated != "Not applicable to me" &
+               age >= age_slider[1] &
+               age <= age_slider[2])
+    
+    work_interfere_bars_treated <- ggplot(data = plot_data) +
+    geom_bar(aes(x = factor(work_interfere_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
+                 fill = work_interfere_treated), 
+             stat = 'count') +
+    ylab("Number of Responses") +
+    xlab("When Treated")+
+    #theme(axis.text.x=element_blank()) +
+    guides(fill=FALSE)
+    
+    work_interfere_bars_untreated <- ggplot(data = plot_data) +
+    geom_bar(aes(x = factor(work_interfere_not_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
+                 fill = work_interfere_not_treated), 
+             stat = 'count') +
+    ylab("Number of Responses") +
+    xlab("When Untreated")+
+    #theme(axis.text.x=element_blank()) +
+    guides(fill=guide_legend(title="How Often?")) 
+    subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY=TRUE, titleX=TRUE)%>%
+      layout( title="Does your mental health issue interfere with your work?")
+}
+)
+
 app$run_server(debug = T)
