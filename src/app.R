@@ -78,7 +78,6 @@ app$layout(
           list(
             dccDropdown(
               id = "q_selection",
-              # options = purrr::map(feature_list$variables3, function(col) list(label = col, value = col)
               options = list(
                 list(label = "mental_health_leave", value = "mental_health_leave"),
                 list(label = "# employees", value = "num_employees")
