@@ -162,22 +162,29 @@ app$callback(
 # First HR Plot:
 app$callback(
   output("work_interfere_bars", "figure"),
-  list(input("age_slider", "value")),
-  function(age_slider=c(15, 65), gender="all") {
+  list(input("age_slider", "value"), input("gender_selection", "value")),
+  function(age_slider=c(15, 65), gender_select="all") {
     plot_data <- data %>% 
       subset(work_interfere_treated != "Not applicable to me" & 
                work_interfere_not_treated != "Not applicable to me" &
                age >= age_slider[1] &
                age <= age_slider[2])
     
+    if (gender_select!="all"){
+      plot_data <- plot_data %>% filter(gender==gender_select)
+    }
+
     work_interfere_bars_treated <- ggplot(data = plot_data) +
       geom_bar(aes(x = factor(work_interfere_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
                    fill = work_interfere_treated), 
                stat = 'count') +
       ylab("Number of Responses") +
       xlab("When Treated")+
-      #theme(axis.text.x=element_blank()) +
-      guides(fill=FALSE)
+      guides(fill=FALSE) +
+      theme(panel.grid.major.x = element_blank(),
+            strip.background = element_rect(
+              fill="white", size=1.5, linetype="solid"
+            ))
     
     work_interfere_bars_untreated <- ggplot(data = plot_data) +
       geom_bar(aes(x = factor(work_interfere_not_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
@@ -185,10 +192,13 @@ app$callback(
                stat = 'count') +
       ylab("Number of Responses") +
       xlab("When Untreated")+
-      #theme(axis.text.x=element_blank()) +
-      guides(fill=guide_legend(title="How Often?")) 
-    subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY=TRUE, titleX=TRUE)%>%
-      layout( title="Does your mental health issue interfere with your work?")
+      guides(fill=FALSE) +
+      theme(panel.grid.major.x = element_blank(),
+            strip.background = element_rect(
+              fill="white", size=1.5, linetype="solid"
+            ))
+    subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY=TRUE, titleX=TRUE )%>%
+      layout(title="Does your mental health issue interfere with your work?", showlegend=FALSE)
   }
 )
 
