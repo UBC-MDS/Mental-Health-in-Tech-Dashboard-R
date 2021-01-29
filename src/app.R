@@ -64,70 +64,82 @@ app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
 app$layout(
   dbcContainer(
     list(
-    dbcRow(list(
-      dbcCol(htmlH1("Mental Health in Tech Dashboard"))
-    )),
-    htmlHr(),
-    dbcRow(list(
-      dbcCol(htmlH2("Overview:"))
-    )),
-    dbcRow(
-      list(
-        dbcCol(
-          list(
-            dccDropdown(
-              id = "q_selection",
-              options = list(
-                list(label = "mental_health_leave", value = "mental_health_leave"),
-                list(label = "# employees", value = "num_employees")
+      dbcRow(list(
+        dbcCol(htmlH1("Mental Health in Tech Dashboard"))
+      )),
+      htmlHr(),
+      dbcRow(list(
+        dbcCol(htmlH2("Overview:"))
+      )),
+      dbcRow(
+        list(
+          dbcCol(
+            list(
+              dccDropdown(
+                id = "q_selection",
+                options = list(
+                  list(label = "mental_health_leave", value = "mental_health_leave"),
+                  list(label = "# employees", value = "num_employees")
+                ),
+                value = "num_employees",
+              )
+            ), md=3
+          ),
+          dbcCol(
+            list(
+              dccGraph(id = "plot-area")
+            )
+          )
+        ) 
+      ),
+      htmlHr(),
+      dbcRow(list(dbcCol(htmlH2("HR Questions:")))),
+      dbcRow(
+        list(
+          dbcCol(
+            list(
+              dbcCol(htmlH4("Gender:")),
+              dccRadioItems(
+                id = "gender_selection",
+                options = list(
+                  list(label = "All", value = "all"),
+                  list(label = "Male", value = "Male"),
+                  list(label = "Female", value = "Female"),
+                  list(label = "Others", value = "Other")
+                ),
+                value = "all"
               ),
-              value = "num_employees",
+              dbcCol(htmlH4("Age of Respondents:")),
+              dccRangeSlider(
+                id = "age_slider",
+                min=15,
+                max=65,
+                allowCross=FALSE,
+                marks=list(
+                  "15"= "15",
+                  "20"= "20",
+                  "25"= "25",
+                  "30"= "30",
+                  "35"= "35",
+                  "40"= "40",
+                  "45"= "45",
+                  "50"= "50",
+                  "55"= "55",
+                  "60"= "60",
+                  "65"= "65"),
+                value=list(15, 65)
+              )
+            ), md=3
+          ),
+          dbcCol(
+            list(
+              dccGraph(id = "work_interfere_bars"),
+              dccGraph(id = "remote_barplot")
             )
-          ), md=3
-        ),
-        dbcCol(
-          list(
-            dccGraph(id = "plot-area")
           )
-        )
-      ) 
-    ),
-    htmlHr(),
-    dbcRow(list(dbcCol(htmlH2("HR Questions:")))),
-    dbcRow(
-      list(
-        dbcCol(
-          list(
-            dbcCol(htmlH4("Age of Respondents:")),
-            dccRangeSlider(
-              id = "age_slider",
-              min=15,
-              max=65,
-              allowCross=FALSE,
-              marks=list(
-                    "15"= "15",
-                    "20"= "20",
-                    "25"= "25",
-                    "30"= "30",
-                    "35"= "35",
-                    "40"= "40",
-                    "45"= "45",
-                    "50"= "50",
-                    "55"= "55",
-                    "60"= "60",
-                    "65"= "65"),
-              value=list(15, 65)
-            )
-          ), md=3
-        ),
-        dbcCol(
-          list(
-            dccGraph(id = "work_interfere_bars")
-          )
-        )
-    ))
-  )
-))
+        ))
+    )
+  ))
 
 
 app$callback(
@@ -153,31 +165,58 @@ app$callback(
   list(input("age_slider", "value")),
   function(age_slider=c(15, 65), gender="all") {
     plot_data <- data %>% 
-        subset(work_interfere_treated != "Not applicable to me" & 
+      subset(work_interfere_treated != "Not applicable to me" & 
                work_interfere_not_treated != "Not applicable to me" &
                age >= age_slider[1] &
                age <= age_slider[2])
     
     work_interfere_bars_treated <- ggplot(data = plot_data) +
-    geom_bar(aes(x = factor(work_interfere_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
-                 fill = work_interfere_treated), 
-             stat = 'count') +
-    ylab("Number of Responses") +
-    xlab("When Treated")+
-    #theme(axis.text.x=element_blank()) +
-    guides(fill=FALSE)
+      geom_bar(aes(x = factor(work_interfere_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
+                   fill = work_interfere_treated), 
+               stat = 'count') +
+      ylab("Number of Responses") +
+      xlab("When Treated")+
+      #theme(axis.text.x=element_blank()) +
+      guides(fill=FALSE)
     
     work_interfere_bars_untreated <- ggplot(data = plot_data) +
-    geom_bar(aes(x = factor(work_interfere_not_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
-                 fill = work_interfere_not_treated), 
-             stat = 'count') +
-    ylab("Number of Responses") +
-    xlab("When Untreated")+
-    #theme(axis.text.x=element_blank()) +
-    guides(fill=guide_legend(title="How Often?")) 
+      geom_bar(aes(x = factor(work_interfere_not_treated, levels = c('Never', 'Rarely', 'Sometimes', 'Often')), 
+                   fill = work_interfere_not_treated), 
+               stat = 'count') +
+      ylab("Number of Responses") +
+      xlab("When Untreated")+
+      #theme(axis.text.x=element_blank()) +
+      guides(fill=guide_legend(title="How Often?")) 
     subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY=TRUE, titleX=TRUE)%>%
       layout( title="Does your mental health issue interfere with your work?")
-}
+  }
 )
+
+
+app$callback(
+  output("remote_barplot", "figure"),
+  list(input("age_slider", "value"), input("gender_selection", "value")),
+  function(age_slider=c(15, 65), gender_select="all") {
+    data3 <- data.frame(data) %>%  drop_na(gender) %>% 
+      filter(age>=age_slider[1] & age<=age_slider[2])
+    if (gender_select!="all"){
+      data3 <- data3 %>% filter(gender==gender_select)
+    }
+    
+    plot3 <- ggplot(data3)+
+      aes(x=is_remote, fill=is_remote) +
+      geom_bar(stat = 'count', position = "dodge")+
+      facet_wrap(~have_mental_helth_disorder, strip.position = "bottom")+
+      ggtitle("Do employees that work remotely report fewer mental health issues?")+
+      labs(x = 'Mental Health Response', y = 'Number of responses', fill="Remote work")+
+      theme(axis.text.x=element_blank(),
+            axis.ticks.x=element_blank(),
+            panel.grid.major.x = element_blank(),
+            strip.background = element_rect(
+              fill="white", size=1.5, linetype="solid"
+            ))
+    
+    ggplotly(plot3)
+  })
 
 app$run_server(debug = T)
