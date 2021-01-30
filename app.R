@@ -232,7 +232,7 @@ app$callback(
       x = ..prop.., group = 1,
       y = !!sym(q_selection)
     )) +
-      geom_bar() +
+      geom_bar(fill='#027b8e') +
       facet_wrap(~gender) +
       labs(x = "Proportion of Responses") +
       scale_x_continuous(labels = function(x) paste0(x * 100, "%")) +
@@ -241,7 +241,8 @@ app$callback(
         strip.background = element_rect(fill = "white"),
         axis.text = element_text(size = 12),
         axis.title = element_text(size = 10),
-        plot.title = element_text(size = 18, hjust = -0.5)
+        plot.title = element_text(size = 18, hjust = -0.5),
+        panel.grid.major.y = element_blank()
       ) +
       labs(title = "Survey Responses by Gender", x = "",
            y = "")
