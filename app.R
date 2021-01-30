@@ -266,10 +266,8 @@ app$callback(
 
     work_interfere_bars_treated <- ggplot(data = plot_data) +
       geom_bar(aes(
-        x = factor(work_interfere_treated, levels = c("Never", "Rarely", "Sometimes", "Often")),
-        fill = work_interfere_treated
-      ),
-      stat = "count"
+        x = factor(work_interfere_treated, levels = c("Never", "Rarely", "Sometimes", "Often"))),
+      stat = "count", fill = '#8175aa'
       ) +
       ylab("Number of Responses") +
       xlab("When Treated") +
@@ -283,10 +281,8 @@ app$callback(
 
     work_interfere_bars_untreated <- ggplot(data = plot_data) +
       geom_bar(aes(
-        x = factor(work_interfere_not_treated, levels = c("Never", "Rarely", "Sometimes", "Often")),
-        fill = work_interfere_not_treated
-      ),
-      stat = "count"
+        x = factor(work_interfere_not_treated, levels = c("Never", "Rarely", "Sometimes", "Often"))),
+      stat = "count", fill = '#8175aa'
       ) +
       ylab("Number of Responses") +
       xlab("When Untreated") +
@@ -298,7 +294,7 @@ app$callback(
         )
       )
     subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY = TRUE, titleX = TRUE) %>%
-      layout(title = "Does your mental health issue interfere with your work?", showlegend = FALSE)
+      layout(title = "Does your mental health issue interfere with your work?", showlegend = FALSE, margin=list(t = 50))
   }
 )
 
