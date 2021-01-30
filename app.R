@@ -356,7 +356,7 @@ app$callback(
 #' @export
 build_graph <- function(column_name, column_input) {
   column_name <- enquo(column_name)
-  
+
   subset_data <-
     data %>%
     select(!!column_name, country) %>%
@@ -365,26 +365,28 @@ build_graph <- function(column_name, column_input) {
     mutate_all(funs(na_if(., ""))) %>%
     remove_empty("cols") %>%
     drop_na()
-  
+
   normalize_counts <-
     subset_data %>% group_by(clean_country) %>% count(!!column_name) %>%
     transform(n = (n / sum(n) * 100)) %>%
     spread(key = !!column_name, value = n)
-  
+
   labs <- normalize_counts$clean_country
   vals <- normalize_counts[[column_input]]
-  
+
   plot_ly(normalize_counts,
           labels = ~ labs,
           values = ~ vals,
-          width = 330, 
+          width = 330,
           height = 330) %>%
     add_pie(hole = 0.44) %>%
     layout(legend = list(x = 0.01, y = 0.99, yanchor="bottom", xanchor="left"),
            margin=list(r=20, l=0, b=0, t=0),
            autosize=FALSE
            )
-  
+
 }
 
-app$run_server(debug = T)
+# app$run_server(debug = T)
+
+app$run_server(host = '0.0.0.0')
