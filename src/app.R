@@ -23,45 +23,36 @@ data_cols <- c(1:16)
 # data[, data_cols] <- lapply(data[, data_cols], factor)
 data[, data_cols] <- lapply(data[, data_cols], fct_explicit_na, na_level='No response')
 
-# data$num_employees <- ordered(data$num_employees, levels=c(
-#   "6-25", "26-100",
-#   "100-500", "500-1000", 'No response'
-# ))
-# 
-# data$mental_health_leave <- factor(
-#   data$mental_health_leave, levels=
-#   c(
-#     "Very easy", "Somewhat easy",
-#     "Neither easy nor difficult",
-#     "Somewhat difficult", "Very difficult",
-#     "I don't know", 'No response'
-#   )
-# )
-# data$mental_health_benefits_healthcare <- factor(
-#   data$mental_health_benefits_healthcare, levels=
-#   c(
-#     "I know some", "Somewhat easy",
-#     "Neither easy nor difficult",
-#     "Somewhat difficult",
-#     "Very difficult", "I don't know", 'No response'
-#   )
-# )
-# data$online_resources <- factor(data$online_resources, levels= c(
-#   "Very easy",
-#   "Somewhat easy",
-#   "Neither easy nor difficult",
-#   "Somewhat difficult",
-#   "Very difficult",
-#   "I don't know", 'No response'
-# ))
+data$num_employees <- ordered(data$num_employees, levels=c("1-5",
+  "6-25", "26-100", "100-500", "500-1000", "More than 1000", 'No response'
+))
+
+data$mental_health_leave <- factor(
+  data$mental_health_leave, levels=
+  c(
+    "Very easy", "Somewhat easy",
+    "Neither easy nor difficult",
+    "Somewhat difficult", "Very difficult",
+    "I don't know", 'No response'
+  )
+)
+
+data$online_resources <- factor(data$online_resources, levels= c(
+  "Yes, I know several",
+  "I know some",
+  "No, I don't know any", 'No response'
+))
 ymn_cols <- c(
   "self_employed", "tech_org", "mental_health_resources",
   "mental_disorder_discuss", "health_disorder_discuss",
   "discuss_coworker", "discuss_supervisor",
-  "have_mental_helth_disorder", "treatment", 'medical_coverage', 'mental_vs_physical'
+  "have_mental_helth_disorder", "treatment", 
+  'mental_health_benefits_healthcare', 'productivity'
 )
 data[ymn_cols] <- lapply(data[ymn_cols], fct_explicit_na, na_level='No response')
-
+data[ymn_cols] <- lapply(data[ymn_cols], factor, levels = c("Yes", "Maybe", "I don't know",
+                          "Unsure", "No", "Not eligible for coverage",
+                          "Not applicable to me", "No response"))
 
 
 
