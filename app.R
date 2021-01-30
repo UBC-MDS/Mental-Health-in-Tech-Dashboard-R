@@ -110,7 +110,8 @@ app$layout(
                   list(label = "Female", value = "Female"),
                   list(label = "Others", value = "Other")
                 ),
-                value = "all"
+                value = "all",
+                inputStyle = list("marginLeft" = "10px", "marginRight" = "2px")
               ),
               dbcCol(htmlH4("Age of Respondents:")),
               dccRangeSlider(
@@ -267,10 +268,8 @@ app$callback(
 
     work_interfere_bars_treated <- ggplot(data = plot_data) +
       geom_bar(aes(
-        x = factor(work_interfere_treated, levels = c("Never", "Rarely", "Sometimes", "Often")),
-        fill = work_interfere_treated
-      ),
-      stat = "count"
+        x = factor(work_interfere_treated, levels = c("Never", "Rarely", "Sometimes", "Often"))),
+      stat = "count", fill = '#8175aa'
       ) +
       ylab("Number of Responses") +
       xlab("When Treated") +
@@ -284,10 +283,8 @@ app$callback(
 
     work_interfere_bars_untreated <- ggplot(data = plot_data) +
       geom_bar(aes(
-        x = factor(work_interfere_not_treated, levels = c("Never", "Rarely", "Sometimes", "Often")),
-        fill = work_interfere_not_treated
-      ),
-      stat = "count"
+        x = factor(work_interfere_not_treated, levels = c("Never", "Rarely", "Sometimes", "Often"))),
+      stat = "count", fill = '#8175aa'
       ) +
       ylab("Number of Responses") +
       xlab("When Untreated") +
@@ -298,8 +295,8 @@ app$callback(
           fill = "white", size = 1.5, linetype = "solid"
         )
       )
-    subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY = TRUE, titleX = TRUE) %>%
-      layout(title = "Does your mental health issue interfere with your work?", showlegend = FALSE)
+    subplot(ggplotly(work_interfere_bars_treated, tooltip = c("count")), ggplotly(work_interfere_bars_untreated, tooltip = c("count")), margin = 0.05, titleY = TRUE, titleX = TRUE) %>%
+      layout(title = "Does your mental health issue interfere with your work?", showlegend = FALSE, margin=list(t = 50))
   }
 )
 
@@ -327,7 +324,8 @@ app$callback(
         panel.grid.major.x = element_blank(),
         strip.background = element_rect(
           fill = "white", size = 1.5, linetype = "solid"
-        )
+        ),
+        plot.title = element_text(size = 15, hjust = -0.5)
       )
 
     ggplotly(plot3)
