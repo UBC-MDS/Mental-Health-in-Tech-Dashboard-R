@@ -243,8 +243,9 @@ app$callback(
         axis.title = element_text(size = 10),
         plot.title = element_text(size = 18, hjust = -0.5)
       ) +
-      labs(title = "Survey Responses by Gender", x = "")
-    ggplotly(gp)
+      labs(title = "Survey Responses by Gender", x = "",
+           y = "")
+    ggplotly(gp, tooltip = FALSE)
   }
 )
 
