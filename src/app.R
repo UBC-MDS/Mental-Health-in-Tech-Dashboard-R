@@ -20,48 +20,49 @@ countries = c("United States of America",
 # Change columns into factors
 data_cols <- c(1:16)
 
-data[, data_cols] <- lapply(data[, data_cols], factor)
+# data[, data_cols] <- lapply(data[, data_cols], factor)
+data[, data_cols] <- lapply(data[, data_cols], fct_explicit_na, na_level='No response')
 
-data$num_employees <- factor(data$num_employees, c(
-  "6-25", "26-100",
-  "100-500", "500-1000"
-))
-data$mental_health_leave <- factor(
-  data$mental_health_leave,
-  c(
-    "Very easy", "Somewhat easy",
-    "Neither easy nor difficult",
-    "Somewhat difficult", "Very difficult",
-    "I don't know"
-  )
-)
-data$mental_health_benefits_healthcare <- factor(
-  data$mental_health_benefits_healthcare,
-  c(
-    "I know some", "Somewhat easy",
-    "Neither easy nor difficult",
-    "Somewhat difficult",
-    "Very difficult", "I don't know"
-  )
-)
-data$online_resources <- factor(data$online_resources, c(
-  "Very easy",
-  "Somewhat easy",
-  "Neither easy nor difficult",
-  "Somewhat difficult",
-  "Very difficult",
-  "I don't know"
-))
+# data$num_employees <- ordered(data$num_employees, levels=c(
+#   "6-25", "26-100",
+#   "100-500", "500-1000", 'No response'
+# ))
+# 
+# data$mental_health_leave <- factor(
+#   data$mental_health_leave, levels=
+#   c(
+#     "Very easy", "Somewhat easy",
+#     "Neither easy nor difficult",
+#     "Somewhat difficult", "Very difficult",
+#     "I don't know", 'No response'
+#   )
+# )
+# data$mental_health_benefits_healthcare <- factor(
+#   data$mental_health_benefits_healthcare, levels=
+#   c(
+#     "I know some", "Somewhat easy",
+#     "Neither easy nor difficult",
+#     "Somewhat difficult",
+#     "Very difficult", "I don't know", 'No response'
+#   )
+# )
+# data$online_resources <- factor(data$online_resources, levels= c(
+#   "Very easy",
+#   "Somewhat easy",
+#   "Neither easy nor difficult",
+#   "Somewhat difficult",
+#   "Very difficult",
+#   "I don't know", 'No response'
+# ))
 ymn_cols <- c(
   "self_employed", "tech_org", "mental_health_resources",
   "mental_disorder_discuss", "health_disorder_discuss",
   "discuss_coworker", "discuss_supervisor",
-  "have_mental_helth_disorder", "treatment"
+  "have_mental_helth_disorder", "treatment", 'medical_coverage', 'mental_vs_physical'
 )
-data[ymn_cols] <- lapply(data[ymn_cols], factor, levels = c(
-  "No",
-  "Maybe", "Yes"
-))
+data[ymn_cols] <- lapply(data[ymn_cols], fct_explicit_na, na_level='No response')
+
+
 
 
 app <- Dash$new(external_stylesheets = dbcThemes$BOOTSTRAP)
@@ -83,9 +84,10 @@ app$layout(
             list(
               dccDropdown(
                 id = "q_selection",
-                options = list(
-                  list(label = "mental_health_leave", value = "mental_health_leave"),
-                  list(label = "# employees", value = "num_employees")
+                options = map2(feature_list$variables3[data_cols][-c(15)], feature_list$variables[data_cols][-c(15)], function(col, col2) list(label=col, value=col2)
+                # options = list(
+                #   list(label = "mental_health_leave", value = "mental_health_leave"),
+                #   list(label = "# employees", value = "num_employees")
                 ),
                 value = "num_employees",
               )
@@ -235,7 +237,7 @@ app$callback(
     )) +
       geom_bar() +
       facet_wrap(~gender) +
-      labs(x = "\n\n\nProportion of Responses") +
+      labs(x = "Proportion of Responses") +
       scale_x_continuous(labels = function(x) paste0(x * 100, "%")) +
       theme_bw()
     ggplotly(gp)
