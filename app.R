@@ -110,7 +110,8 @@ app$layout(
                   list(label = "Female", value = "Female"),
                   list(label = "Others", value = "Other")
                 ),
-                value = "all"
+                value = "all",
+                inputStyle = list("marginLeft" = "10px", "marginRight" = "2px")
               ),
               dbcCol(htmlH4("Age of Respondents:")),
               dccRangeSlider(
