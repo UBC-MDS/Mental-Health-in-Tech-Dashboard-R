@@ -5,11 +5,17 @@ library(dashBootstrapComponents)
 library(tidyverse)
 library(plotly)
 library(devtools)
+library(janitor)
 # install_github('facultyai/dash-bootstrap-components@r-release')
 
 #read in data files
 data <- read_csv("data/processed/mental_health_clean_reformat.csv")
 feature_list = read_csv("data/processed/features_list.csv")
+
+countries = c("United States of America",
+              "United Kingdom",
+              "Canada",
+              "Germany")
 
 # Change columns into factors
 data_cols <- c(1:16)
@@ -370,13 +376,13 @@ build_graph <- function(column_name, column_input) {
   
   plot_ly(normalize_counts,
           labels = ~ labs,
-          values = ~ vals) %>%
+          values = ~ vals,
+          width = 330, 
+          height = 330) %>%
     add_pie(hole = 0.44) %>%
     layout(legend = list(x = 0.01, y = 0.99, yanchor="bottom", xanchor="left"),
            margin=list(r=20, l=0, b=0, t=0),
-           autosize=FALSE,
-           width = 330,
-           height=330
+           autosize=FALSE
            )
   
 }
