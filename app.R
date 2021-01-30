@@ -242,7 +242,7 @@ app$callback(
         strip.background = element_rect(fill = "white"),
         axis.text = element_text(size = 12),
         axis.title = element_text(size = 10),
-        plot.title = element_text(size = 18, hjust = -0.5),
+        plot.title = element_text(size = 15, hjust = -0.5),
         panel.grid.major.y = element_blank()
       ) +
       labs(title = "Survey Responses by Gender", x = "",
