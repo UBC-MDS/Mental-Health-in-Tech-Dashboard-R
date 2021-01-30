@@ -293,7 +293,7 @@ app$callback(
           fill = "white", size = 1.5, linetype = "solid"
         )
       )
-    subplot(ggplotly(work_interfere_bars_treated), ggplotly(work_interfere_bars_untreated), margin = 0.05, titleY = TRUE, titleX = TRUE) %>%
+    subplot(ggplotly(work_interfere_bars_treated, tooltip = c("count")), ggplotly(work_interfere_bars_untreated, tooltip = c("count")), margin = 0.05, titleY = TRUE, titleX = TRUE) %>%
       layout(title = "Does your mental health issue interfere with your work?", showlegend = FALSE, margin=list(t = 50))
   }
 )
@@ -322,7 +322,8 @@ app$callback(
         panel.grid.major.x = element_blank(),
         strip.background = element_rect(
           fill = "white", size = 1.5, linetype = "solid"
-        )
+        ),
+        plot.title = element_text(size = 15, hjust = -0.5)
       )
 
     ggplotly(plot3)
@@ -405,6 +406,6 @@ build_graph <- function(column_name, column_input) {
 
 }
 
-app$run_server(debug = T)
+# app$run_server(debug = T)
 
-#app$run_server(host = '0.0.0.0')
+app$run_server(host = '0.0.0.0')
