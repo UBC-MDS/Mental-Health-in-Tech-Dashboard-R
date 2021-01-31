@@ -11,6 +11,8 @@ between responses for those who indicate that they do have a mental
 health issue versus those that do not and comparing various variables to
 see how much they may interfere with their work.
 
+The most recent version of the dashboard is available at the following link: https://mentalhealth-in-tech-r.herokuapp.com/
+
 Relevance
 ---------
 
